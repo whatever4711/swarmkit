@@ -286,12 +286,21 @@ func (f *PlatformFilter) Check(n *NodeInfo) bool {
 }
 
 func (f *PlatformFilter) platformEqual(imgPlatform, nodePlatform api.Platform) bool {
-	// normalize "x86_64" architectures to "amd64"
-	if imgPlatform.Architecture == "x86_64" {
+	switch imgPlatform.Architecture {
+	case "x86_64":
 		imgPlatform.Architecture = "amd64"
+	case "armv6l", "armv7l":
+		imgPlatform.Architecture = "arm"
+	case "aarch64":
+		imgPlatform.Architecture = "arm64"			
 	}
-	if nodePlatform.Architecture == "x86_64" {
+	switch nodePlatform.Architecture {
+	case "x86_64":
 		nodePlatform.Architecture = "amd64"
+	case "armv6l", "armv7l":
+		nodePlatform.Architecture = "arm"
+	case "aarch64":
+		nodePlatform.Architecture = "arm64"			
 	}
 
 	if (imgPlatform.Architecture == "" || imgPlatform.Architecture == nodePlatform.Architecture) && (imgPlatform.OS == "" || imgPlatform.OS == nodePlatform.OS) {
